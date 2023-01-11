@@ -1,0 +1,78 @@
+{
+	"animations": [
+		{
+			"offsets": [
+				0,
+				0
+			],
+			"indices": [],
+			"fps": 24,
+			"anim": "idle",
+			"loop": false,
+			"name": "splitathon idle"
+		},
+		{
+			"offsets": [
+				136,
+				3
+			],
+			"indices": [],
+			"fps": 24,
+			"anim": "singLEFT",
+			"loop": false,
+			"name": "splitathon right"
+		},
+		{
+			"offsets": [
+				16,
+				41
+			],
+			"indices": [],
+			"fps": 24,
+			"anim": "singUP",
+			"loop": false,
+			"name": "splitathon up"
+		},
+		{
+			"offsets": [
+				46,
+				-24
+			],
+			"indices": [],
+			"fps": 24,
+			"anim": "singDOWN",
+			"loop": false,
+			"name": "splitathon down"
+		},
+		{
+			"offsets": [
+				-18,
+				-7
+			],
+			"indices": [],
+			"fps": 24,
+			"anim": "singRIGHT",
+			"loop": false,
+			"name": "splitathon left"
+		}
+	],
+	"no_antialiasing": false,
+	"image": "characters/Splitathon_Bambi",
+	"position": [
+		0,
+		350
+	],
+	"healthicon": "bf",
+	"flip_x": false,
+	"healthbar_colors": [
+		49,
+		176,
+		209
+	],
+	"camera_position": [
+		0,
+		0
+	],
+	"sing_duration": 4,
+	"scale": 1
+}
