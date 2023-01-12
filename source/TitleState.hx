@@ -237,6 +237,20 @@ class TitleState extends MusicBeatState
 		}
 		#end
 		FlxG.camera.antialiasing = true;
+		unfinished = new FlxText(0, 0, 0, "NOTE: This is only an interface overhaul, not a new system.", 16);
+		unfinished.font = Paths.font("opensans.ttf");
+		unfinished.cameras = [hud];
+		unfinished.screenCenter(X);
+		unfinished.y = 610;
+		unfinished.alpha = 0;
+		add(unfinished);
+		new FlxTimer().start(0.5, function(tweens:FlxTimer){
+			FlxTween.tween(unfinished, {y: 640, alpha: 1}, 0.5, {ease:FlxEase.cubeOut, onComplete:function(tweensagain:FlxTween){
+				new FlxTimer().start(1.5, function(tweensagain:FlxTimer){
+					FlxTween.tween(unfinished, {y: 610, alpha: 0}, 0.5, {ease:FlxEase.cubeOut});
+				});
+			}});
+		});
 	}
 
 	var logoBl:FlxSprite;
