@@ -14,8 +14,8 @@
 		{
 			"loop": false,
 			"offsets": [
-				210,
-				-3
+				160,
+				47
 			],
 			"anim": "singLEFT",
 			"fps": 24,
@@ -26,7 +26,7 @@
 			"loop": false,
 			"offsets": [
 				110,
-				61
+				91
 			],
 			"anim": "singUP",
 			"fps": 24,
@@ -36,8 +36,8 @@
 		{
 			"loop": false,
 			"offsets": [
-				190,
-				50
+				150,
+				70
 			],
 			"anim": "singDOWN",
 			"fps": 24,
@@ -47,8 +47,8 @@
 		{
 			"loop": false,
 			"offsets": [
-				0,
-				-30
+				50,
+				60
 			],
 			"anim": "singRIGHT",
 			"fps": 24,
@@ -62,17 +62,17 @@
 		-180,
 		-80
 	],
-	"healthicon": "bf",
+	"healthicon": "expunged",
 	"flip_x": false,
 	"healthbar_colors": [
-		49,
-		176,
-		209
-	],
-	"camera_position": [
+		0,
 		0,
 		0
 	],
+	"camera_position": [
+		250,
+		460
+	],
 	"sing_duration": 4,
-	"scale": 1
+	"scale": 0.3
 }

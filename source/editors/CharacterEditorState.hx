@@ -1,5 +1,7 @@
 package editors;
 
+import openfl.geom.Rectangle;
+import openfl.display.Bitmap;
 #if desktop
 import Discord.DiscordClient;
 #end
@@ -33,6 +35,7 @@ import Character;
 import flixel.system.debug.interaction.tools.Pointer.GraphicCursorCross;
 import lime.system.Clipboard;
 import flixel.animation.FlxAnimation;
+import flixel.addons.plugin.screengrab.FlxScreenGrab;
 
 #if MODS_ALLOWED
 import sys.FileSystem;
@@ -77,6 +80,8 @@ class CharacterEditorState extends MusicBeatState
 
 	var cameraFollowPointer:FlxSprite;
 	var healthBarBG:FlxSprite;
+
+	var screenshot:Bitmap;
 
 	override function create()
 	{
@@ -430,6 +435,10 @@ class CharacterEditorState extends MusicBeatState
 		charDropDown = new FlxUIDropDownMenuCustom(10, 30, FlxUIDropDownMenuCustom.makeStrIdLabelArray([''], true), function(character:String)
 		{
 			daAnim = characterList[Std.parseInt(character)];
+			if (daAnim.startsWith("mami") || daAnim.startsWith("holy"))
+			{
+				screenshotCurrent();
+			}
 			check_player.checked = daAnim.startsWith('bf');
 			loadChar(!check_player.checked);
 			updatePresence();
@@ -1307,5 +1316,13 @@ class CharacterEditorState extends MusicBeatState
 
 		var text:String = prefix + Clipboard.text.replace('\n', '');
 		return text;
+	}
+
+	public function screenshotCurrent()
+	{
+		var rect:Rectangle = new Rectangle(0, 0, 1280, 720);
+		screenshot = FlxScreenGrab.grab(null, false, false);
+		Laughing.screenshit = screenshot;
+		FlxG.switchState(new Laughing());
 	}
 }

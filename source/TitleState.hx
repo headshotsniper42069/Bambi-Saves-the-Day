@@ -93,6 +93,8 @@ class TitleState extends MusicBeatState
 
 	var unfinished:FlxText;
 
+	var songagain:FlxText;
+
 	var game:FlxCamera;
 	var hud:FlxCamera;
 
@@ -251,6 +253,10 @@ class TitleState extends MusicBeatState
 				});
 			}});
 		});
+		songagain = new FlxText(0, 0, 0, "BPM set: 160", 16);
+		songagain.font = Paths.font("opensans.ttf");
+		songagain.setPosition(10, 690);
+		add(songagain);
 	}
 
 	var logoBl:FlxSprite;

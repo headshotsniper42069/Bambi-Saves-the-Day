@@ -1,59 +1,59 @@
 {
 	"animations": [
 		{
+			"loop": false,
 			"offsets": [
 				0,
 				0
 			],
-			"indices": [],
-			"fps": 24,
 			"anim": "idle",
-			"loop": false,
-			"name": "splitathon idle"
-		},
-		{
-			"offsets": [
-				136,
-				3
-			],
-			"indices": [],
 			"fps": 24,
-			"anim": "singLEFT",
-			"loop": false,
-			"name": "splitathon right"
+			"name": "splitathon idle",
+			"indices": []
 		},
 		{
-			"offsets": [
-				16,
-				41
-			],
-			"indices": [],
-			"fps": 24,
-			"anim": "singUP",
 			"loop": false,
-			"name": "splitathon up"
-		},
-		{
 			"offsets": [
 				46,
-				-24
+				1
 			],
-			"indices": [],
+			"anim": "singLEFT",
 			"fps": 24,
-			"anim": "singDOWN",
-			"loop": false,
-			"name": "splitathon down"
+			"name": "splitathon right",
+			"indices": []
 		},
 		{
-			"offsets": [
-				-18,
-				-7
-			],
-			"indices": [],
-			"fps": 24,
-			"anim": "singRIGHT",
 			"loop": false,
-			"name": "splitathon left"
+			"offsets": [
+				3,
+				14
+			],
+			"anim": "singUP",
+			"fps": 24,
+			"name": "splitathon up",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [
+				12,
+				-8
+			],
+			"anim": "singDOWN",
+			"fps": 24,
+			"name": "splitathon down",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [
+				-7,
+				-3
+			],
+			"anim": "singRIGHT",
+			"fps": 24,
+			"name": "splitathon left",
+			"indices": []
 		}
 	],
 	"no_antialiasing": false,
@@ -62,17 +62,17 @@
 		0,
 		350
 	],
-	"healthicon": "bf",
+	"healthicon": "bambi",
 	"flip_x": false,
 	"healthbar_colors": [
-		49,
-		176,
-		209
+		37,
+		191,
+		55
 	],
 	"camera_position": [
-		0,
-		0
+		-120,
+		210
 	],
 	"sing_duration": 4,
-	"scale": 1
+	"scale": 0.3
 }

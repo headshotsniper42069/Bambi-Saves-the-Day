@@ -218,11 +218,11 @@ class ChartingState extends MusicBeatState
 				needsVoices: true,
 				arrowSkin: '',
 				splashSkin: 'noteSplashes',//idk it would crash if i didn't
-				player1: 'bf',
-				player2: 'dad',
-				gfVersion: 'gf',
+				player1: '',
+				player2: '',
+				gfVersion: '',
 				speed: 1,
-				stage: 'stage',
+				stage: '',
 				validScore: false
 			};
 			addSection();
