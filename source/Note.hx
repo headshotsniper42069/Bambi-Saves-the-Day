@@ -57,7 +57,7 @@ class Note extends FlxSprite
 	public var lateHitMult:Float = 1;
 	public var lowPriority:Bool = false;
 
-	public static var swagWidth:Float = 160 * 0.7;
+	public static var swagWidth:Float = 70 * 0.7;
 	
 	private var colArray:Array<String> = ['purple', 'blue', 'green', 'red'];
 	private var pixelInt:Array<Int> = [0, 1, 2, 3];
@@ -329,7 +329,10 @@ class Note extends FlxSprite
 			animation.addByPrefix(colArray[noteData] + 'hold', colArray[noteData] + ' hold piece');
 		}
 
-		setGraphicSize(Std.int(width * 0.7));
+		if (PlayState.SONG.song.toLowerCase() == 'strikeback')
+			setGraphicSize(Std.int(width * 0.3));
+		else
+			setGraphicSize(Std.int(width * 0.7));
 		updateHitbox();
 	}
 

@@ -38,7 +38,7 @@ class StrumNote extends FlxSprite
 		if(PlayState.SONG.arrowSkin != null && PlayState.SONG.arrowSkin.length > 1) skin = PlayState.SONG.arrowSkin;
 		texture = skin; //Load texture and anims
 
-		scrollFactor.set();
+	//	scrollFactor.set();
 	}
 
 	public function reloadNote()
@@ -89,7 +89,10 @@ class StrumNote extends FlxSprite
 			animation.addByPrefix('red', 'arrowRIGHT');
 
 			antialiasing = ClientPrefs.globalAntialiasing;
-			setGraphicSize(Std.int(width * 0.7));
+			if (PlayState.SONG.song.toLowerCase() == 'strikeback')
+				setGraphicSize(Std.int(width * 0.3));
+			else
+				setGraphicSize(Std.int(width * 0.7));
 
 			switch (Math.abs(noteData) % 4)
 			{

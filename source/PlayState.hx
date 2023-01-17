@@ -1,5 +1,8 @@
 package;
 
+import openfl.display.Bitmap;
+import flixel.addons.plugin.screengrab.FlxScreenGrab;
+import openfl.geom.Rectangle;
 import flixel.graphics.FlxGraphic;
 #if desktop
 import Discord.DiscordClient;
@@ -151,6 +154,8 @@ class PlayState extends MusicBeatState
 
 	public var elapsedtime:Float;
 	public var expungedpos:Float;
+	public var bambipos:Float;
+	public var cubepos:Float; //how to remove
 	public var cubestart:Float = 15200;
 	public var backgroundspeed:Float = 2;
 	public var cubespeed:Float = 200;
@@ -723,7 +728,7 @@ class PlayState extends MusicBeatState
 
 		strumLine = new FlxSprite(ClientPrefs.middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, 50).makeGraphic(FlxG.width, 10);
 		if(ClientPrefs.downScroll) strumLine.y = FlxG.height - 150;
-		strumLine.scrollFactor.set();
+	//	strumLine.scrollFactor.set();
 
 		var showTime:Bool = (ClientPrefs.timeBarType != 'Disabled');
 		timeTxt = new FlxText(STRUM_X + (FlxG.width / 2) - 248, 19, 400, "", 32);
@@ -865,9 +870,18 @@ class PlayState extends MusicBeatState
 			botplayTxt.y = timeBarBG.y - 78;
 		}
 
-		strumLineNotes.cameras = [camHUD];
-		grpNoteSplashes.cameras = [camHUD];
-		notes.cameras = [camHUD];
+		if (SONG.song.toLowerCase() == 'strikeback')
+		{
+			strumLineNotes.cameras = [camGame];
+			grpNoteSplashes.cameras = [camGame];
+			notes.cameras = [camGame];
+		}
+		else
+		{
+			strumLineNotes.cameras = [camHUD];
+			grpNoteSplashes.cameras = [camHUD];
+			notes.cameras = [camHUD];
+		}
 		healthBar.cameras = [camHUD];
 		healthBarBG.cameras = [camHUD];
 		iconP1.cameras = [camHUD];
@@ -2061,6 +2075,8 @@ class PlayState extends MusicBeatState
 	function startSong():Void
 	{
 		expungedpos = dad.y;
+		bambipos = boyfriend.y;
+		cubepos = strikerbambicube.y;
 		startingSong = false;
 
 		previousFrameTime = FlxG.game.ticks;
@@ -2201,7 +2217,7 @@ class PlayState extends MusicBeatState
 				swagNote.noteType = songNotes[3];
 				if(!Std.isOfType(songNotes[3], String)) swagNote.noteType = editors.ChartingState.noteTypeList[songNotes[3]]; //Backward compatibility + compatibility with Week 7 charts
 
-				swagNote.scrollFactor.set();
+			//	swagNote.scrollFactor.set();
 
 				var susLength:Float = swagNote.sustainLength;
 
@@ -2218,7 +2234,7 @@ class PlayState extends MusicBeatState
 						sustainNote.mustPress = gottaHitNote;
 						sustainNote.gfNote = (section.gfSection && (songNotes[1]<4));
 						sustainNote.noteType = swagNote.noteType;
-						sustainNote.scrollFactor.set();
+					//	sustainNote.scrollFactor.set();
 						swagNote.tail.push(sustainNote);
 						sustainNote.parent = swagNote;
 						unspawnNotes.push(sustainNote);
@@ -2396,7 +2412,7 @@ class PlayState extends MusicBeatState
 			var targetAlpha:Float = 1;
 			if (player < 1)
 			{
-				if(!ClientPrefs.opponentStrums) targetAlpha = 0;
+				if(!ClientPrefs.opponentStrums || SONG.song.toLowerCase() == 'strikeback') targetAlpha = 0;
 				else if(ClientPrefs.middleScroll) targetAlpha = 0.35;
 			}
 
@@ -2415,6 +2431,8 @@ class PlayState extends MusicBeatState
 
 			if (player == 1)
 			{
+				babyArrow.x = 5300;
+				babyArrow.y += 700;
 				playerStrums.add(babyArrow);
 			}
 			else
@@ -2724,7 +2742,10 @@ class PlayState extends MusicBeatState
 						cube.setPosition(cubeinit - (cubestart * FlxG.random.float(0.7, 1.6)), FlxG.random.int(250, 1000));
 					}
 					dad.y = expungedpos + (Math.sin(elapsedtime) * 40);
+					strikerbambicube.y = cubepos + (Math.sin(elapsedtime * 2) * 20);
+					boyfriend.y = bambipos + (Math.sin(elapsedtime * 2) * 20);
 					trace(expungedpos + (Math.sin(elapsedtime) * 40));
+					trace(boyfriend.x);
 				}
 		}
 
@@ -3104,7 +3125,10 @@ class PlayState extends MusicBeatState
 				for (timer in modchartTimers) {
 					timer.active = true;
 				}
-				openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x - boyfriend.positionArray[0], boyfriend.getScreenPosition().y - boyfriend.positionArray[1], camFollowPos.x, camFollowPos.y));
+				if (SONG.song.toLowerCase() == 'strikeback')
+					screenshotCurrent();
+				else
+					openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x - boyfriend.positionArray[0], boyfriend.getScreenPosition().y - boyfriend.positionArray[1], camFollowPos.x, camFollowPos.y));
 
 				// MusicBeatState.switchState(new GameOverState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
 
@@ -3580,7 +3604,8 @@ class PlayState extends MusicBeatState
 				});
 			}
 			if (SONG.player1 == 'bambi' && SONG.song.toLowerCase() == 'strikeback' && !isCameraOnForcedPos)
-				defaultCamZoom = 1.4;
+			//	defaultCamZoom = 0.1; // 1.4
+				defaultCamZoom = 1.4; // 1.4
 		}
 	}
 
@@ -5117,4 +5142,13 @@ class PlayState extends MusicBeatState
 
 	var curLight:Int = -1;
 	var curLightEvent:Int = -1;
+
+	public function screenshotCurrent()
+	{
+		var screenshot:Bitmap;
+		var rect:Rectangle = new Rectangle(0, 0, 1280, 720);
+		screenshot = FlxScreenGrab.grab(null, false, false);
+		Laughing.screenshit = screenshot;
+		FlxG.switchState(new Laughing());
+	}
 }

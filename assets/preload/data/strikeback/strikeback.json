@@ -1,7 +1,7 @@
 {
 	"song": {
-		"speed": 3.5,
-		"stage": "stage",
+		"speed": 1.9,
+		"stage": "striker",
 		"player1": "bambi",
 		"player2": "expunged",
 		"events": [],
