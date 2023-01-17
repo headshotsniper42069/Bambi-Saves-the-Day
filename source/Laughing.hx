@@ -24,6 +24,7 @@ class Laughing extends FlxState
         add(screenshotsprite);
         screenshotsprite.antialiasing = true;
         screenshotsprite.setPosition(320, 180);
+        FlxG.sound.music.stop();
         FlxG.sound.play(Paths.sound('laughing', 'preload'), 1, false, null, false, function(){
             Sys.exit(0);
         });

@@ -161,6 +161,8 @@ class PlayState extends MusicBeatState
 	public var cubespeed:Float = 200;
 	public var cubeend:Float = 10000;
 	public var cubeinit:Float = -2560; // a lot of values
+	public static var retrying:Bool = false;
+	public var impact:FlxSound;
 	public var vocals:FlxSound;
 
 	public var dad:Character = null;
@@ -1882,7 +1884,15 @@ class PlayState extends MusicBeatState
 				switch (swagCounter)
 				{
 					case 0:
-						FlxG.sound.play(Paths.sound('intro3' + introSoundsSuffix), 0.6);
+						if (SONG.song.toLowerCase() == 'strikeback')
+							FlxG.sound.play(Paths.sound('strikeback intro'), 1);
+						else
+							FlxG.sound.play(Paths.sound('intro3' + introSoundsSuffix), 0.6);
+						if (retrying)
+						{
+							retrying = false;
+							impact = FlxG.sound.load(Paths.sound('retry', 'shared'));
+						}
 					case 1:
 						countdownReady = new FlxSprite().loadGraphic(Paths.image(introAlts[0]));
 						countdownReady.cameras = [camHUD];
@@ -1894,16 +1904,19 @@ class PlayState extends MusicBeatState
 
 						countdownReady.screenCenter();
 						countdownReady.antialiasing = antialias;
-						insert(members.indexOf(notes), countdownReady);
+						if (SONG.song.toLowerCase() != 'strikeback')
+							insert(members.indexOf(notes), countdownReady);
 						FlxTween.tween(countdownReady, {/*y: countdownReady.y + 100,*/ alpha: 0}, Conductor.crochet / 1000, {
 							ease: FlxEase.cubeInOut,
 							onComplete: function(twn:FlxTween)
 							{
-								remove(countdownReady);
+								if (SONG.song.toLowerCase() == 'strikeback')
+									remove(countdownReady);
 								countdownReady.destroy();
 							}
 						});
-						FlxG.sound.play(Paths.sound('intro2' + introSoundsSuffix), 0.6);
+						if (SONG.song.toLowerCase() != 'strikeback')
+							FlxG.sound.play(Paths.sound('intro2' + introSoundsSuffix), 0.6);
 					case 2:
 						countdownSet = new FlxSprite().loadGraphic(Paths.image(introAlts[1]));
 						countdownSet.cameras = [camHUD];
@@ -1914,16 +1927,19 @@ class PlayState extends MusicBeatState
 
 						countdownSet.screenCenter();
 						countdownSet.antialiasing = antialias;
-						insert(members.indexOf(notes), countdownSet);
+						if (SONG.song.toLowerCase() != 'strikeback')
+							insert(members.indexOf(notes), countdownSet);
 						FlxTween.tween(countdownSet, {/*y: countdownSet.y + 100,*/ alpha: 0}, Conductor.crochet / 1000, {
 							ease: FlxEase.cubeInOut,
 							onComplete: function(twn:FlxTween)
 							{
-								remove(countdownSet);
+								if (SONG.song.toLowerCase() != 'strikeback')
+									remove(countdownSet);
 								countdownSet.destroy();
 							}
 						});
-						FlxG.sound.play(Paths.sound('intro1' + introSoundsSuffix), 0.6);
+						if (SONG.song.toLowerCase() != 'strikeback')
+							FlxG.sound.play(Paths.sound('intro1' + introSoundsSuffix), 0.6);
 					case 3:
 						countdownGo = new FlxSprite().loadGraphic(Paths.image(introAlts[2]));
 						countdownGo.cameras = [camHUD];
@@ -1936,16 +1952,19 @@ class PlayState extends MusicBeatState
 
 						countdownGo.screenCenter();
 						countdownGo.antialiasing = antialias;
-						insert(members.indexOf(notes), countdownGo);
+						if (SONG.song.toLowerCase() != 'strikeback')
+							insert(members.indexOf(notes), countdownGo);
 						FlxTween.tween(countdownGo, {/*y: countdownGo.y + 100,*/ alpha: 0}, Conductor.crochet / 1000, {
 							ease: FlxEase.cubeInOut,
 							onComplete: function(twn:FlxTween)
 							{
-								remove(countdownGo);
+								if (SONG.song.toLowerCase() != 'strikeback')
+									remove(countdownGo);
 								countdownGo.destroy();
 							}
 						});
-						FlxG.sound.play(Paths.sound('introGo' + introSoundsSuffix), 0.6);
+						if (SONG.song.toLowerCase() != 'strikeback')
+							FlxG.sound.play(Paths.sound('introGo' + introSoundsSuffix), 0.6);
 					case 4:
 				}
 
@@ -2086,6 +2105,8 @@ class PlayState extends MusicBeatState
 		FlxG.sound.music.pitch = playbackRate;
 		FlxG.sound.music.onComplete = finishSong.bind();
 		vocals.play();
+		if (impact != null)
+			impact.stop();
 
 		if(startOnTime > 0)
 		{
@@ -3095,12 +3116,23 @@ class PlayState extends MusicBeatState
 		persistentUpdate = false;
 		paused = true;
 		cancelMusicFadeTween();
-		MusicBeatState.switchState(new ChartingState());
-		chartingMode = true;
+		if (SONG.song.toLowerCase() == 'strikeback')
+		{
+			screenshotCurrent();
+			FlxG.switchState(new Laughing());
+			#if desktop
+			DiscordClient.changePresence("Tried to Back Out", null, null, true);
+			#end
+		}
+		else
+		{
+			MusicBeatState.switchState(new ChartingState());
+			chartingMode = true;
 
-		#if desktop
-		DiscordClient.changePresence("Chart Editor", null, null, true);
-		#end
+			#if desktop
+			DiscordClient.changePresence("Chart Editor", null, null, true);
+			#end
+		}
 	}
 
 	public var isDead:Bool = false; //Don't mess with this on Lua!!!
@@ -3126,7 +3158,11 @@ class PlayState extends MusicBeatState
 					timer.active = true;
 				}
 				if (SONG.song.toLowerCase() == 'strikeback')
+				{
+					retrying = true;
 					screenshotCurrent();
+					FlxG.switchState(new Ending('worst'));
+				}
 				else
 					openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x - boyfriend.positionArray[0], boyfriend.getScreenPosition().y - boyfriend.positionArray[1], camFollowPos.x, camFollowPos.y));
 
@@ -5149,6 +5185,5 @@ class PlayState extends MusicBeatState
 		var rect:Rectangle = new Rectangle(0, 0, 1280, 720);
 		screenshot = FlxScreenGrab.grab(null, false, false);
 		Laughing.screenshit = screenshot;
-		FlxG.switchState(new Laughing());
 	}
 }
