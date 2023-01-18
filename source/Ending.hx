@@ -50,5 +50,10 @@ class Ending extends FlxState
         trace(endingscreenshot.y);
         trace(endingscreenshot.scale.x);
         trace(endingscreenshot.scale.y);
+        if (FlxG.keys.justPressed.ENTER)
+        {
+            FlxG.sound.music.stop();
+            FlxG.switchState(new PlayState());
+        }
     }
 }

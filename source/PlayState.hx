@@ -536,6 +536,8 @@ class PlayState extends MusicBeatState
 				cube = new FlxSprite(-2560 - (27200 * FlxG.random.float(0.7, 1.3)), FlxG.random.int(250, 500), Paths.image("strikeback/cube" + FlxG.random.int(1, 6), "shared"));
 				add(cube);
 				camZoomingDecay = 2;
+				camGame.alpha = 0;
+				camHUD.alpha = 0;
 		}
 
 		switch(Paths.formatToSongPath(SONG.song))
@@ -1109,6 +1111,12 @@ class PlayState extends MusicBeatState
 		Paths.clearUnusedMemory();
 		
 		CustomFadeTransition.nextCamera = camOther;
+		if (retrying)
+		{
+			impact = FlxG.sound.load(Paths.sound('retry', 'shared'));
+			impact.play();
+			retrying = false;
+		}
 	}
 
 	#if (!flash && sys)
@@ -1888,11 +1896,6 @@ class PlayState extends MusicBeatState
 							FlxG.sound.play(Paths.sound('strikeback intro'), 1);
 						else
 							FlxG.sound.play(Paths.sound('intro3' + introSoundsSuffix), 0.6);
-						if (retrying)
-						{
-							retrying = false;
-							impact = FlxG.sound.load(Paths.sound('retry', 'shared'));
-						}
 					case 1:
 						countdownReady = new FlxSprite().loadGraphic(Paths.image(introAlts[0]));
 						countdownReady.cameras = [camHUD];
@@ -2097,6 +2100,9 @@ class PlayState extends MusicBeatState
 		bambipos = boyfriend.y;
 		cubepos = strikerbambicube.y;
 		startingSong = false;
+
+		camGame.alpha = 1;
+		camHUD.alpha = 1;
 
 		previousFrameTime = FlxG.game.ticks;
 		lastReportedPlayheadPosition = 0;
@@ -4302,7 +4308,8 @@ class PlayState extends MusicBeatState
 		});
 		combo = 0;
 	//	health -= daNote.missHealth * healthLoss;
-		health -= 0.4;
+		if (!daNote.isSustainNote)
+			health -= 0.7; // yea i said it
 		
 		if(instakillOnMiss)
 		{
