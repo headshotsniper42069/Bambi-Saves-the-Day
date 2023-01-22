@@ -27,7 +27,6 @@ using StringTools;
 class MainMenuState extends MusicBeatState
 {
 	public static var psychEngineVersion:String = '0.6.2'; //This is also used for Discord RPC
-	public static var reflectVersion:String = 'Alpha State'; //This is also also used for Discord RPC
 	public static var curSelected:Int = 0;
 
 	var menuItems:FlxTypedGroup<FlxText>;
@@ -64,6 +63,7 @@ class MainMenuState extends MusicBeatState
 	var text1white:Bool = true;
 	var text2white:Bool = true;
 	var text3white:Bool = true;
+	var rectangle:FlxSprite;
 
 	override function create()
 	{
@@ -112,29 +112,33 @@ class MainMenuState extends MusicBeatState
 		
 		// magenta.scrollFactor.set();
 
-		menuItems = new FlxTypedGroup<FlxText>();
-		add(menuItems);
-
 		var scale:Float = 1;
 		/*if(optionShit.length > 6) {
 			scale = 6 / optionShit.length;
 		}*/
 
+		rectangle = new FlxSprite(-80, -100);
+		rectangle.makeGraphic(350, 950, FlxColor.BLACK);
+		rectangle.updateHitbox();
+	//	rectangle.antialiasing = true;
+		rectangle.angle = 350;
+		add(rectangle);
+
+		menuItems = new FlxTypedGroup<FlxText>();
+		add(menuItems);
+
 		for (i in 0...optionShit.length)
 		{
-			var menuItem:FlxText = new FlxText(150, 250 + (i * 150), 0, optionText[i], 26);
+			var menuItem:FlxText = new FlxText(100, 250 + (i * 150), 0, optionText[i], 26);
 			menuItem.font = Paths.font('opensans.ttf');
 			menuItem.ID = i;
 			menuItems.add(menuItem);
 		}
 
-		var versionShit:FlxText = new FlxText(12, FlxG.height - 64, 0, "Psych Engine v" + psychEngineVersion, 12);
+		var versionShit:FlxText = new FlxText(12, FlxG.height - 44, 0, "Psych Engine v" + psychEngineVersion, 12);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
-		var versionShit:FlxText = new FlxText(12, FlxG.height - 44, 0, "Reflect " + reflectVersion, 12);
-		versionShit.scrollFactor.set();
-		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
 		var versionShit:FlxText = new FlxText(12, FlxG.height - 24, 0, "Friday Night Funkin' v" + Application.current.meta.get('version'), 12);
 		versionShit.scrollFactor.set();
@@ -175,7 +179,7 @@ class MainMenuState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
-		if (FlxG.sound.music.volume < 0.8)
+		if (FlxG.sound.music.volume < 0.8 && !selectedSomethin)
 		{
 			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
 			if(FreeplayState.vocals != null) FreeplayState.vocals.volume += 0.5 * elapsed;
@@ -199,10 +203,14 @@ class MainMenuState extends MusicBeatState
 
 					if(ClientPrefs.flashing) FlxFlicker.flicker(magenta, 1.1, 0.15, false);
 
+					var optionselected:String = optionShit[curSelected];
+					if (optionselected == 'story_mode')
+						FlxG.sound.music.fadeOut(1, 0);
+
 					menuItems.forEach(function(spr:FlxText)
 					{
-						FlxTween.tween(spr, {alpha: 0, x: 100}, 0.5, {
-							ease: FlxEase.quadOut,
+						FlxTween.tween(spr, {alpha: 0, x: -100}, 0.5, {
+							ease: FlxEase.cubeOut,
 							onComplete: function(twn:FlxTween)
 							{
 								spr.kill();
@@ -214,7 +222,8 @@ class MainMenuState extends MusicBeatState
 							switch (daChoice)
 							{
 								case 'story_mode':
-									MusicBeatState.switchState(new StoryMenuState());
+									PlayState.SONG = Song.loadFromJson('strikeback', 'strikeback');
+									LoadingState.loadAndSwitchState(new PlayState(), true);
 								case 'credits':
 									MusicBeatState.switchState(new CreditsState());
 								case 'options':
@@ -222,16 +231,19 @@ class MainMenuState extends MusicBeatState
 							}
 						});
 					});
+					FlxTween.tween(rectangle, {x: -450}, 0.5, {
+						ease: FlxEase.cubeOut
+					});
 				}
 			}
-			#if desktop
-			else if (FlxG.keys.anyJustPressed(debugKeys))
-			{
-				selectedSomethin = true;
-				MusicBeatState.switchState(new MasterEditorMenu());
-			}
-			#end
 		}
+		#if desktop
+		if (FlxG.keys.anyJustPressed(debugKeys) && !selectedSomethin)
+		{
+			selectedSomethin = true;
+			MusicBeatState.switchState(new MasterEditorMenu());
+		}
+		#end
 
 		menuItems.forEach(function(text:FlxText)
 		{

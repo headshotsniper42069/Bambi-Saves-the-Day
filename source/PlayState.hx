@@ -281,6 +281,18 @@ class PlayState extends MusicBeatState
 	var strikerbackground:FlxSprite; //lol flixel sprite not background sprite :trolled:
 	var strikerbambicube:FlxSprite; //bambi car
 	var cube:FlxSprite; //the cube artifacts
+
+	//bambi's farm
+	var farmbackground:FlxSprite;
+	var flatgrass:FlxSprite;
+	var hills:FlxSprite;
+	var farmHouse:FlxSprite;
+	var grassLand:FlxSprite;
+	var cornFence:FlxSprite;
+	var cornFence2:FlxSprite;
+	var sign:FlxSprite;
+	var infarm:Bool = false;
+
 	public var songScore:Int = 0;
 	public var songHits:Int = 0;
 	public var songMisses:Int = 0;
@@ -538,6 +550,37 @@ class PlayState extends MusicBeatState
 				camZoomingDecay = 2;
 				camGame.alpha = 0;
 				camHUD.alpha = 0;
+				farmbackground = new FlxSprite(-600, -200, Paths.image('strikeback/farm/sky'));
+				farmbackground.scrollFactor.set(0.6, 0.6);
+				add(farmbackground);
+				flatgrass = new FlxSprite(350, 75, Paths.image('strikeback/farm/gm_flatgrass'));
+				flatgrass.scrollFactor.set(0.65, 0.65);
+				flatgrass.setGraphicSize(Std.int(flatgrass.width * 0.34));
+				flatgrass.updateHitbox();
+				
+				hills = new FlxSprite(-173, 100, Paths.image('strikeback/farm/orangey hills'));
+				hills.scrollFactor.set(0.65, 0.65);
+				
+				farmHouse = new FlxSprite(100, 125, Paths.image('strikeback/farm/funfarmhouse', 'shared'));
+				farmHouse.scrollFactor.set(0.7, 0.7);
+				farmHouse.setGraphicSize(Std.int(farmHouse.width * 0.9));
+				farmHouse.updateHitbox();
+
+				grassLand = new FlxSprite(-600, 500, Paths.image('strikeback/farm/grass lands', 'shared'));
+
+				cornFence = new FlxSprite(-400, 200, Paths.image('strikeback/farm/cornFence', 'shared'));
+				
+				cornFence2 = new FlxSprite(1100, 200, Paths.image('strikeback/farm/cornFence2', 'shared'));
+				
+				sign = new FlxSprite(0, 350, Paths.image('strikeback/farm/sign', 'shared'));
+				
+				add(flatgrass);
+				add(hills);
+				add(farmHouse);
+				add(grassLand);
+				add(cornFence);
+				add(cornFence2);
+				add(sign);
 		}
 
 		switch(Paths.formatToSongPath(SONG.song))
@@ -2758,7 +2801,7 @@ class PlayState extends MusicBeatState
 					}
 				}
 			case 'striker':
-				if (!startingSong)
+				if (!startingSong && !infarm)
 				{
 					strikerbackground.x += backgroundspeed / FlxG.updateFramerate * 75 * 4 * 2 / 10; // Synchronized Value
 					cube.x += cubespeed / FlxG.updateFramerate * 75 * 4 * 2 / 10;
@@ -3629,6 +3672,7 @@ class PlayState extends MusicBeatState
 			tweenCamIn();
 			if (SONG.song.toLowerCase() == 'strikeback' && !isCameraOnForcedPos)
 				defaultCamZoom = 0.8;
+			//	defaultCamZoom = 0.1;
 		}
 		else
 		{
@@ -4802,6 +4846,21 @@ class PlayState extends MusicBeatState
 		lastStepHit = curStep;
 		setOnLuas('curStep', curStep);
 		callOnLuas('onStepHit', []);
+
+		if (SONG.song.toLowerCase() == 'strikeback')
+		{
+			switch (curStep)
+			{
+				case 144 | 152 | 1088 | 1096 | 1714 | 1724 | 1828 | 1840:
+					animationWithoutNote('up');
+				case 146 | 154 | 1090 | 1098 | 1717 | 1824 | 1826 | 1849:
+					animationWithoutNote('left');
+				case 1720 | 1726 | 1832 | 1842 | 1846 | 1852:
+					animationWithoutNote('down');
+				case 1834 | 1844:
+					animationWithoutNote('right');
+			}
+		}	
 	}
 
 	var lightningStrikeBeat:Int = 0;
@@ -4980,6 +5039,16 @@ class PlayState extends MusicBeatState
 					cubespeed = 450;
 					cubeinit = 1450;
 					cubeend = 8000;
+				case 580:
+					isCameraOnForcedPos = true;
+					infarm = true;
+					boyfriend.setGraphicSize(Std.int(boyfriend.width * 2));
+					boyfriend.x = 1570;
+					boyfriend.y = 550;
+					cameraSpeed = 250;
+					defaultCamZoom = 0.7;
+					camZoomingDecay = 500;
+					camFollow.set(boyfriend.getMidpoint().x + 100, boyfriend.getMidpoint().y - 190);
 			}
 		}
 	}
@@ -5192,5 +5261,10 @@ class PlayState extends MusicBeatState
 		var rect:Rectangle = new Rectangle(0, 0, 1280, 720);
 		screenshot = FlxScreenGrab.grab(null, false, false);
 		Laughing.screenshit = screenshot;
+	}
+	public function animationWithoutNote(currentanimation:String)
+	{
+		boyfriend.playAnim('sing' + currentanimation.toUpperCase(), true);
+		boyfriend.holdTimer = 0;
 	}
 }
