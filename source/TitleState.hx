@@ -109,7 +109,10 @@ class TitleState extends MusicBeatState
 		// Just to load a mod on start up if ya got one. For mods that change the menu music and bg
 		WeekData.loadTheFirstEnabledMod();
 
-		FlxG.sound.playMusic(Paths.music("electronic dance", "preload"), 0);
+		FlxG.sound.playMusic(Paths.music("electronic dance", "preload"), 0, false);
+		FlxG.sound.music.onComplete = function() {
+			FlxG.switchState(new FakeTitleState());
+		};
 		FlxG.sound.music.pause();
 
 		game = new FlxCamera();
@@ -289,6 +292,7 @@ class TitleState extends MusicBeatState
 			// music.loadStream(Paths.music('freakyMenu'));
 			// FlxG.sound.list.add(music);
 			// music.play();
+			FlxG.sound.music.time = 0;
 			FlxG.sound.music.resume();
 			FlxG.sound.music.volume = 1;
 		}

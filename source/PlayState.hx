@@ -690,7 +690,7 @@ class PlayState extends MusicBeatState
 			SONG.gfVersion = gfVersion; //Fix for the Chart Editor
 		}
 
-		if (!stageData.hide_girlfriend)
+		if (!stageData.hide_girlfriend && SONG.song.toLowerCase() != 'strikeback')
 		{
 			gf = new Character(0, 0, gfVersion);
 			startCharacterPos(gf);
@@ -3167,8 +3167,12 @@ class PlayState extends MusicBeatState
 		cancelMusicFadeTween();
 		if (SONG.song.toLowerCase() == 'strikeback')
 		{
-			screenshotCurrent();
-			FlxG.switchState(new Laughing());
+		//	screenshotCurrent();
+		//	FlxG.switchState(new Laughing());
+			FlxG.sound.music.stop();
+			camHUD.alpha = 0;
+			camGame.alpha = 0;
+			FlxG.switchState(new Ending("cheater", true));
 			#if desktop
 			DiscordClient.changePresence("Tried to Back Out", null, null, true);
 			#end
@@ -4894,7 +4898,10 @@ class PlayState extends MusicBeatState
 		}
 		if (curBeat % boyfriend.danceEveryNumBeats == 0 && boyfriend.animation.curAnim != null && !boyfriend.animation.curAnim.name.startsWith('sing') && !boyfriend.stunned)
 		{
-			boyfriend.dance();
+			if (SONG.song.toLowerCase() == 'strikeback' && curBeat >= 581)
+				boyfriend.playAnim('corn');
+			else
+				boyfriend.dance();
 		}
 		if (curBeat % dad.danceEveryNumBeats == 0 && dad.animation.curAnim != null && !dad.animation.curAnim.name.startsWith('sing') && !dad.stunned)
 		{
@@ -5043,12 +5050,13 @@ class PlayState extends MusicBeatState
 					isCameraOnForcedPos = true;
 					infarm = true;
 					boyfriend.setGraphicSize(Std.int(boyfriend.width * 2));
-					boyfriend.x = 1570;
+					boyfriend.x = 1670;
 					boyfriend.y = 550;
 					cameraSpeed = 250;
 					defaultCamZoom = 0.7;
 					camZoomingDecay = 500;
-					camFollow.set(boyfriend.getMidpoint().x + 100, boyfriend.getMidpoint().y - 190);
+					camFollow.set(800, 490);
+					FlxTween.tween(boyfriend, {x: 740}, 0.75, {ease:FlxEase.quintOut});
 			}
 		}
 	}
