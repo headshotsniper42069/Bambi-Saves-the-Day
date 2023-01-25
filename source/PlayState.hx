@@ -1124,7 +1124,7 @@ class PlayState extends MusicBeatState
 	
 		#if desktop
 		// Updating Discord Rich Presence.
-		DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+		DiscordClient.changePresence(detailsText, SONG.song, iconP2.getCharacter());
 		#end
 
 		if(!ClientPrefs.controllerMode)
@@ -1160,6 +1160,8 @@ class PlayState extends MusicBeatState
 			impact.play();
 			retrying = false;
 		}
+		if (SONG.song.toLowerCase() == 'strikeback')
+			canPause = false;
 	}
 
 	#if (!flash && sys)
@@ -2157,6 +2159,9 @@ class PlayState extends MusicBeatState
 		if (impact != null)
 			impact.stop();
 
+		if (SONG.song.toLowerCase() == 'strikeback')
+			canPause = true;
+
 		if(startOnTime > 0)
 		{
 			setSongTime(startOnTime - 500);
@@ -2186,7 +2191,7 @@ class PlayState extends MusicBeatState
 
 		#if desktop
 		// Updating Discord Rich Presence (with Time Left)
-		DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter(), true, songLength);
+		DiscordClient.changePresence(detailsText, SONG.song, iconP2.getCharacter(), true, songLength);
 		#end
 		setOnLuas('songLength', songLength);
 		callOnLuas('onSongStart', []);
@@ -2502,12 +2507,15 @@ class PlayState extends MusicBeatState
 			if (player == 1)
 			{
 				babyArrow.x = 5300;
-				babyArrow.y += 700;
+				if (ClientPrefs.downScroll)
+					babyArrow.y += 300;
+				else
+					babyArrow.y += 700;
 				playerStrums.add(babyArrow);
 			}
 			else
 			{
-				if(ClientPrefs.middleScroll)
+				if(ClientPrefs.middleScroll || SONG.song.toLowerCase() != 'strikeback')
 				{
 					babyArrow.x += 310;
 					if(i > 1) { //Up and Right
@@ -2596,11 +2604,11 @@ class PlayState extends MusicBeatState
 			#if desktop
 			if (startTimer != null && startTimer.finished)
 			{
-				DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter(), true, songLength - Conductor.songPosition - ClientPrefs.noteOffset);
+				DiscordClient.changePresence(detailsText, SONG.song, iconP2.getCharacter(), true, songLength - Conductor.songPosition - ClientPrefs.noteOffset);
 			}
 			else
 			{
-				DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+				DiscordClient.changePresence(detailsText, SONG.song, iconP2.getCharacter());
 			}
 			#end
 		}
@@ -2615,11 +2623,11 @@ class PlayState extends MusicBeatState
 		{
 			if (Conductor.songPosition > 0.0)
 			{
-				DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter(), true, songLength - Conductor.songPosition - ClientPrefs.noteOffset);
+				DiscordClient.changePresence(detailsText, SONG.song, iconP2.getCharacter(), true, songLength - Conductor.songPosition - ClientPrefs.noteOffset);
 			}
 			else
 			{
-				DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+				DiscordClient.changePresence(detailsText, SONG.song, iconP2.getCharacter());
 			}
 		}
 		#end
@@ -2632,7 +2640,7 @@ class PlayState extends MusicBeatState
 		#if desktop
 		if (health > 0 && !paused)
 		{
-			DiscordClient.changePresence(detailsPausedText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+			DiscordClient.changePresence(detailsPausedText, SONG.song, iconP2.getCharacter());
 		}
 		#end
 
@@ -2671,7 +2679,7 @@ class PlayState extends MusicBeatState
 		callOnLuas('onUpdate', [elapsed]);
 
 		elapsedtime += elapsed;
-
+		
 		switch (curStage)
 		{
 			case 'tank':
@@ -3156,7 +3164,7 @@ class PlayState extends MusicBeatState
 		//}
 
 		#if desktop
-		DiscordClient.changePresence(detailsPausedText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+		DiscordClient.changePresence(detailsPausedText, SONG.song, iconP2.getCharacter());
 		#end
 	}
 
@@ -3167,14 +3175,14 @@ class PlayState extends MusicBeatState
 		cancelMusicFadeTween();
 		if (SONG.song.toLowerCase() == 'strikeback')
 		{
-		//	screenshotCurrent();
-		//	FlxG.switchState(new Laughing());
+			screenshotCurrent();
+			FlxG.switchState(new Laughing());
 			FlxG.sound.music.stop();
-			camHUD.alpha = 0;
-			camGame.alpha = 0;
-			FlxG.switchState(new Ending("cheater", true));
+		//	camHUD.alpha = 0;
+		//	camGame.alpha = 0;
+		//	FlxG.switchState(new Ending("cheater", true));
 			#if desktop
-			DiscordClient.changePresence("Tried to Back Out", null, null, true);
+			DiscordClient.changePresence("Tried to Back Out", null);
 			#end
 		}
 		else
@@ -3214,7 +3222,7 @@ class PlayState extends MusicBeatState
 				{
 					retrying = true;
 					screenshotCurrent();
-					FlxG.switchState(new Ending('worst'));
+					FlxG.switchState(new Ending('Worst'));
 				}
 				else
 					openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x - boyfriend.positionArray[0], boyfriend.getScreenPosition().y - boyfriend.positionArray[1], camFollowPos.x, camFollowPos.y));
@@ -3223,7 +3231,7 @@ class PlayState extends MusicBeatState
 
 				#if desktop
 				// Game Over doesn't get his own variable because it's only used here
-				DiscordClient.changePresence("Game Over - " + detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+				DiscordClient.changePresence("Game Over - " + detailsText, SONG.song, iconP2.getCharacter());
 				#end
 				isDead = true;
 				return true;
@@ -3753,6 +3761,14 @@ class PlayState extends MusicBeatState
 			}
 		}
 
+		if (SONG.song.toLowerCase() == 'strikeback')
+		{
+			screenshotCurrent();
+			if (songMisses == 0)
+				FlxG.switchState(new Ending("Best"));
+			else
+				FlxG.switchState(new Ending("Good"));
+		}
 		timeBarBG.visible = false;
 		timeBar.visible = false;
 		timeTxt.visible = false;
@@ -3808,7 +3824,8 @@ class PlayState extends MusicBeatState
 				if (storyPlaylist.length <= 0)
 				{
 					WeekData.loadTheFirstEnabledMod();
-					FlxG.sound.playMusic(Paths.music('freakyMenu'));
+					if (SONG.song.toLowerCase() != 'strikeback')
+						FlxG.sound.playMusic(Paths.music('freakyMenu'));
 
 					cancelMusicFadeTween();
 					if(FlxTransitionableState.skipNextTransIn) {
@@ -3877,8 +3894,11 @@ class PlayState extends MusicBeatState
 				if(FlxTransitionableState.skipNextTransIn) {
 					CustomFadeTransition.nextCamera = null;
 				}
-				MusicBeatState.switchState(new FreeplayState());
-				FlxG.sound.playMusic(Paths.music('freakyMenu'));
+				if (SONG.song.toLowerCase() != 'strikeback')
+				{
+					MusicBeatState.switchState(new FreeplayState());
+					FlxG.sound.playMusic(Paths.music('freakyMenu'));
+				}
 				changedDifficulty = false;
 			}
 			transitioning = true;
@@ -4855,14 +4875,19 @@ class PlayState extends MusicBeatState
 		{
 			switch (curStep)
 			{
-				case 144 | 152 | 1088 | 1096 | 1714 | 1724 | 1828 | 1840:
+				case 144 | 152 | 1088 | 1096 | 1714 | 1724 | 1828 | 1840 | 2304:
 					animationWithoutNote('up');
-				case 146 | 154 | 1090 | 1098 | 1717 | 1824 | 1826 | 1849:
+				case 146 | 154 | 1090 | 1098 | 1717 | 1824 | 1826 | 1849 | 2293 | 2317:
 					animationWithoutNote('left');
-				case 1720 | 1726 | 1832 | 1842 | 1846 | 1852:
+				case 1720 | 1726 | 1832 | 1842 | 1846 | 1852 | 2289 | 2296 | 2310:
 					animationWithoutNote('down');
-				case 1834 | 1844:
+				case 1834 | 1844 | 2299:
 					animationWithoutNote('right');
+				case 1384 | 1386:
+					camZoomingDecay = 500;
+					defaultCamZoom += 0.1;
+				case 1388:
+					defaultCamZoom = 1.8;
 			}
 		}	
 	}
@@ -4993,6 +5018,9 @@ class PlayState extends MusicBeatState
 					strikerbackground.loadGraphic(Paths.image("strikeback/creepyRoom"));
 					strikerbackground.x = 0;
 					backgroundspeed = 4;
+				case 348:
+					camZoomingDecay = 2;
+					defaultCamZoom = 1.4;
 				case 368:
 					strikerbackground.loadGraphic(Paths.image("strikeback/broken_expunged_chain"));
 					strikerbackground.x = 0;
@@ -5056,6 +5084,18 @@ class PlayState extends MusicBeatState
 					defaultCamZoom = 0.7;
 					camZoomingDecay = 500;
 					camFollow.set(800, 490);
+					if (!ClientPrefs.downScroll)
+					{
+						FlxTween.tween(timeTxt, {y: timeTxt.y - 80}, 0.5, {ease:FlxEase.quintOut});
+						FlxTween.tween(timeBarBG, {y: timeBarBG.y - 80}, 0.5, {ease:FlxEase.quintOut});
+						FlxTween.tween(timeBar, {y: timeBar.y - 80}, 0.5, {ease:FlxEase.quintOut});
+					}
+					else
+					{
+						FlxTween.tween(timeTxt, {y: timeTxt.y + 80}, 0.5, {ease:FlxEase.quintOut});
+						FlxTween.tween(timeBarBG, {y: timeBarBG.y + 80}, 0.5, {ease:FlxEase.quintOut});
+						FlxTween.tween(timeBar, {y: timeBar.y + 80}, 0.5, {ease:FlxEase.quintOut});
+					}
 					FlxTween.tween(boyfriend, {x: 740}, 0.75, {ease:FlxEase.quintOut});
 			}
 		}
@@ -5272,6 +5312,7 @@ class PlayState extends MusicBeatState
 	}
 	public function animationWithoutNote(currentanimation:String)
 	{
+		vocals.volume = 1;
 		boyfriend.playAnim('sing' + currentanimation.toUpperCase(), true);
 		boyfriend.holdTimer = 0;
 	}

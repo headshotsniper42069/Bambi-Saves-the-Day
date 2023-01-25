@@ -207,6 +207,8 @@ class MainMenuState extends MusicBeatState
 					if (optionselected == 'story_mode')
 						FlxG.sound.music.fadeOut(1, 0);
 
+					FlxG.mouse.visible = false;
+
 					menuItems.forEach(function(spr:FlxText)
 					{
 						FlxTween.tween(spr, {alpha: 0, x: -100}, 0.5, {

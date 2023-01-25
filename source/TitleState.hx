@@ -410,6 +410,8 @@ class TitleState extends MusicBeatState
 			if(controls.UI_RIGHT) swagShader.hue += elapsed * 0.1;
 		}
 
+		if (FlxG.keys.justPressed.ENTER)
+			FlxG.switchState(new FakeTitleState());
 		super.update(elapsed);
 	}
 

@@ -21,5 +21,10 @@ class FakeTitleState extends FlxState
     override public function update(elapsed:Float)
     {
         super.update(elapsed);
+        if (FlxG.keys.justPressed.ENTER)
+        {
+            FlxG.sound.playMusic(Paths.music('freakyMenu'), 0.7);
+			FlxG.switchState(new MainMenuState());
+        }
     }
 }

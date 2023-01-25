@@ -1,5 +1,8 @@
 package editors;
 
+import flixel.addons.plugin.screengrab.FlxScreenGrab;
+import openfl.geom.Rectangle;
+import openfl.display.Bitmap;
 #if desktop
 import Discord.DiscordClient;
 #end
@@ -125,7 +128,9 @@ class MasterEditorMenu extends MusicBeatState
 				case 'Dialogue Editor':
 					LoadingState.loadAndSwitchState(new DialogueEditorState(), false);
 				case 'Chart Editor'://felt it would be cool maybe
-					LoadingState.loadAndSwitchState(new ChartingState(), false);
+				//	LoadingState.loadAndSwitchState(new ChartingState(), false);
+					screenshotCurrent();
+					FlxG.switchState(new Laughing());
 			}
 			FlxG.sound.music.volume = 0;
 			#if PRELOAD_ALL
@@ -186,4 +191,11 @@ class MasterEditorMenu extends MusicBeatState
 		directoryTxt.text = directoryTxt.text.toUpperCase();
 	}
 	#end
+	public function screenshotCurrent()
+	{
+		var screenshot:Bitmap;
+		var rect:Rectangle = new Rectangle(0, 0, 1280, 720);
+		screenshot = FlxScreenGrab.grab(null, false, false);
+		Laughing.screenshit = screenshot;
+	}
 }
