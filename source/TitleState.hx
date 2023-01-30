@@ -513,7 +513,7 @@ class TitleState extends MusicBeatState
 				FlxG.camera.angle = 10;
 				FlxTween.tween(FlxG.camera, {angle: 0}, 0.3, {ease:FlxEase.cubeOut});
 			}
-			trace("step did get hit: " + funny);
+			trace("step did get hit: " + funny + ", time: " + FlxG.sound.music.time);
 			switch (funny)
 			{
 				case 32:
@@ -538,7 +538,19 @@ class TitleState extends MusicBeatState
 					addMoreText(introtext3[1], 0);
 				case 48:
 					deleteCoolText();
-					createCoolText([introtext4[0]], 0);
+					if (FlxG.save.data.pressed7)
+					{
+						FlxG.sound.music.pause();
+						createCoolText(['why you press 7 on the keyboard?'], 0);
+						FlxG.sound.play(Paths.sound("why you press 7 on the keyboard", "shared"), 1, false, null, false, function(){
+							FlxG.sound.music.time = 4890;
+							FlxG.sound.music.resume();
+						});
+						FlxG.save.data.pressed7 = false;
+						FlxG.save.flush();
+					}
+					else
+						createCoolText([introtext4[0]], 0);
 				case 50:
 					addMoreText(introtext4[1], 0);
 				case 52:

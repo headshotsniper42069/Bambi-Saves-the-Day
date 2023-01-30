@@ -3176,6 +3176,8 @@ class PlayState extends MusicBeatState
 		if (SONG.song.toLowerCase() == 'strikeback')
 		{
 			screenshotCurrent();
+			FlxG.save.data.pressed7 = true;
+			FlxG.save.flush();
 			FlxG.switchState(new Laughing());
 			FlxG.sound.music.stop();
 		//	camHUD.alpha = 0;
