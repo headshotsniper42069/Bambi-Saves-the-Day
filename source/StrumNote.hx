@@ -89,7 +89,7 @@ class StrumNote extends FlxSprite
 			animation.addByPrefix('red', 'arrowRIGHT');
 
 			antialiasing = ClientPrefs.globalAntialiasing;
-			if (PlayState.SONG.song.toLowerCase() == 'strikeback')
+			if (PlayState.SONG.song.toLowerCase() == 'strikeback' || PlayState.SONG.song.toLowerCase() == 'every dave and bambi fantrack ever')
 				setGraphicSize(Std.int(width * 0.3));
 			else
 				setGraphicSize(Std.int(width * 0.7));

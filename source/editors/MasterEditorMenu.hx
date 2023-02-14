@@ -129,8 +129,10 @@ class MasterEditorMenu extends MusicBeatState
 					LoadingState.loadAndSwitchState(new DialogueEditorState(), false);
 				case 'Chart Editor'://felt it would be cool maybe
 				//	LoadingState.loadAndSwitchState(new ChartingState(), false);
-					screenshotCurrent();
-					FlxG.switchState(new Laughing());
+				//	screenshotCurrent();
+				//	FlxG.switchState(new Laughing());
+					PlayState.SONG = Song.loadFromJson('every-dave-and-bambi-fantrack-ever', 'every-dave-and-bambi-fantrack-ever');
+					LoadingState.loadAndSwitchState(new PlayState());
 			}
 			FlxG.sound.music.volume = 0;
 			#if PRELOAD_ALL

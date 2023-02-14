@@ -160,6 +160,7 @@ class PlayState extends MusicBeatState
 	public var backgroundspeed:Float = 2;
 	public var cubespeed:Float = 200;
 	public var cubeend:Float = 10000;
+	public var bambicurrentposition:FlxPoint;
 	public var cubeinit:Float = -2560; // a lot of values
 	public static var retrying:Bool = false;
 	public var impact:FlxSound;
@@ -581,7 +582,52 @@ class PlayState extends MusicBeatState
 				add(cornFence);
 				add(cornFence2);
 				add(sign);
+			case 'bruhsoundeffect':
+				strikerbackground = new FlxSprite(0, -1700, Paths.image("bruh sound effect", "shared"));
+				strikerbackground.setGraphicSize(Std.int(strikerbackground.width * 3));
+				strikerbackground.updateHitbox();
+				add(strikerbackground);
+				strikerbambicube = new FlxSprite(6200, 900, Paths.image("strikeback/rectangle", "shared"));
+				add(strikerbambicube);
+				cube = new FlxSprite(-2560 - (27200 * FlxG.random.float(0.7, 1.3)), FlxG.random.int(250, 500), Paths.image("strikeback/cube" + FlxG.random.int(1, 6), "shared"));
+				add(cube);
+				camZoomingDecay = 2;
+				camGame.alpha = 0;
+				camHUD.alpha = 0;
+				farmbackground = new FlxSprite(-600, -200, Paths.image('strikeback/farm/sky'));
+				farmbackground.scrollFactor.set(0.6, 0.6);
+				add(farmbackground);
+				flatgrass = new FlxSprite(350, 75, Paths.image('strikeback/farm/gm_flatgrass'));
+				flatgrass.scrollFactor.set(0.65, 0.65);
+				flatgrass.setGraphicSize(Std.int(flatgrass.width * 0.34));
+				flatgrass.updateHitbox();
+				
+				hills = new FlxSprite(-173, 100, Paths.image('strikeback/farm/orangey hills'));
+				hills.scrollFactor.set(0.65, 0.65);
+				
+				farmHouse = new FlxSprite(100, 125, Paths.image('strikeback/farm/funfarmhouse', 'shared'));
+				farmHouse.scrollFactor.set(0.7, 0.7);
+				farmHouse.setGraphicSize(Std.int(farmHouse.width * 0.9));
+				farmHouse.updateHitbox();
+
+				grassLand = new FlxSprite(-600, 500, Paths.image('strikeback/farm/grass lands', 'shared'));
+
+				cornFence = new FlxSprite(-400, 200, Paths.image('strikeback/farm/cornFence', 'shared'));
+				
+				cornFence2 = new FlxSprite(1100, 200, Paths.image('strikeback/farm/cornFence2', 'shared'));
+				
+				sign = new FlxSprite(0, 350, Paths.image('strikeback/farm/sign', 'shared'));
+				
+				add(flatgrass);
+				add(hills);
+				add(farmHouse);
+				add(grassLand);
+				add(cornFence);
+				add(cornFence2);
+				add(sign);
 		}
+
+		bambicurrentposition = new FlxPoint();
 
 		switch(Paths.formatToSongPath(SONG.song))
 		{
@@ -690,7 +736,7 @@ class PlayState extends MusicBeatState
 			SONG.gfVersion = gfVersion; //Fix for the Chart Editor
 		}
 
-		if (!stageData.hide_girlfriend && SONG.song.toLowerCase() != 'strikeback')
+		if (!stageData.hide_girlfriend && (SONG.song.toLowerCase() != 'strikeback' && SONG.song.toLowerCase() != 'every dave and bambi fantrack ever'))
 		{
 			gf = new Character(0, 0, gfVersion);
 			startCharacterPos(gf);
@@ -722,6 +768,8 @@ class PlayState extends MusicBeatState
 
 		dad = new Character(0, 0, SONG.player2);
 		startCharacterPos(dad, true);
+		if (SONG.song.toLowerCase() == 'every dave and bambi fantrack ever')
+			dad.alpha = 0;
 		dadGroup.add(dad);
 		startCharacterLua(dad.curCharacter);
 
@@ -871,7 +919,7 @@ class PlayState extends MusicBeatState
 		healthBarBG.visible = !ClientPrefs.hideHud;
 		healthBarBG.xAdd = -4;
 		healthBarBG.yAdd = -4;
-		if (SONG.song.toLowerCase() != 'strikeback')
+		if (SONG.song.toLowerCase() != 'strikeback' && SONG.song.toLowerCase() != 'every dave and bambi fantrack ever')
 			add(healthBarBG);
 		if(ClientPrefs.downScroll) healthBarBG.y = 0.11 * FlxG.height;
 
@@ -881,7 +929,7 @@ class PlayState extends MusicBeatState
 		// healthBar
 		healthBar.visible = !ClientPrefs.hideHud;
 		healthBar.alpha = ClientPrefs.healthBarAlpha;
-		if (SONG.song.toLowerCase() != 'strikeback')
+		if (SONG.song.toLowerCase() != 'strikeback' && SONG.song.toLowerCase() != 'every dave and bambi fantrack ever')
 			add(healthBar);
 		healthBarBG.sprTracker = healthBar;
 
@@ -889,14 +937,14 @@ class PlayState extends MusicBeatState
 		iconP1.y = healthBar.y - 75;
 		iconP1.visible = !ClientPrefs.hideHud;
 		iconP1.alpha = ClientPrefs.healthBarAlpha;
-		if (SONG.song.toLowerCase() != 'strikeback')
+		if (SONG.song.toLowerCase() != 'strikeback' && SONG.song.toLowerCase() != 'every dave and bambi fantrack ever')
 			add(iconP1);
 
 		iconP2 = new HealthIcon(dad.healthIcon, false);
 		iconP2.y = healthBar.y - 75;
 		iconP2.visible = !ClientPrefs.hideHud;
 		iconP2.alpha = ClientPrefs.healthBarAlpha;
-		if (SONG.song.toLowerCase() != 'strikeback')
+		if (SONG.song.toLowerCase() != 'strikeback' && SONG.song.toLowerCase() != 'every dave and bambi fantrack ever')
 			add(iconP2);
 		reloadHealthBarColors();
 
@@ -917,7 +965,7 @@ class PlayState extends MusicBeatState
 			botplayTxt.y = timeBarBG.y - 78;
 		}
 
-		if (SONG.song.toLowerCase() == 'strikeback')
+		if (SONG.song.toLowerCase() == 'strikeback' || SONG.song.toLowerCase() == 'every dave and bambi fantrack ever')
 		{
 			strumLineNotes.cameras = [camGame];
 			grpNoteSplashes.cameras = [camGame];
@@ -1160,7 +1208,7 @@ class PlayState extends MusicBeatState
 			impact.play();
 			retrying = false;
 		}
-		if (SONG.song.toLowerCase() == 'strikeback')
+		if (SONG.song.toLowerCase() == 'strikeback' || SONG.song.toLowerCase() == 'every dave and bambi fantrack ever')
 			canPause = false;
 	}
 
@@ -1939,7 +1987,7 @@ class PlayState extends MusicBeatState
 					case 0:
 						if (SONG.song.toLowerCase() == 'strikeback')
 							FlxG.sound.play(Paths.sound('strikeback intro'), 1);
-						else
+						else if (SONG.song.toLowerCase() != 'every dave and bambi fantrack ever')
 							FlxG.sound.play(Paths.sound('intro3' + introSoundsSuffix), 0.6);
 					case 1:
 						countdownReady = new FlxSprite().loadGraphic(Paths.image(introAlts[0]));
@@ -1952,18 +2000,18 @@ class PlayState extends MusicBeatState
 
 						countdownReady.screenCenter();
 						countdownReady.antialiasing = antialias;
-						if (SONG.song.toLowerCase() != 'strikeback')
+						if (SONG.song.toLowerCase() != 'strikeback' && SONG.song.toLowerCase() != 'every dave and bambi fantrack ever')
 							insert(members.indexOf(notes), countdownReady);
 						FlxTween.tween(countdownReady, {/*y: countdownReady.y + 100,*/ alpha: 0}, Conductor.crochet / 1000, {
 							ease: FlxEase.cubeInOut,
 							onComplete: function(twn:FlxTween)
 							{
-								if (SONG.song.toLowerCase() == 'strikeback')
+								if (SONG.song.toLowerCase() == 'strikeback' || SONG.song.toLowerCase() == 'every dave and bambi fantrack ever')
 									remove(countdownReady);
 								countdownReady.destroy();
 							}
 						});
-						if (SONG.song.toLowerCase() != 'strikeback')
+						if (SONG.song.toLowerCase() != 'strikeback' && SONG.song.toLowerCase() != 'every dave and bambi fantrack ever')
 							FlxG.sound.play(Paths.sound('intro2' + introSoundsSuffix), 0.6);
 					case 2:
 						countdownSet = new FlxSprite().loadGraphic(Paths.image(introAlts[1]));
@@ -1975,18 +2023,18 @@ class PlayState extends MusicBeatState
 
 						countdownSet.screenCenter();
 						countdownSet.antialiasing = antialias;
-						if (SONG.song.toLowerCase() != 'strikeback')
+						if (SONG.song.toLowerCase() != 'strikeback' && SONG.song.toLowerCase() != 'every dave and bambi fantrack ever')
 							insert(members.indexOf(notes), countdownSet);
 						FlxTween.tween(countdownSet, {/*y: countdownSet.y + 100,*/ alpha: 0}, Conductor.crochet / 1000, {
 							ease: FlxEase.cubeInOut,
 							onComplete: function(twn:FlxTween)
 							{
-								if (SONG.song.toLowerCase() != 'strikeback')
+								if (SONG.song.toLowerCase() != 'strikeback' && SONG.song.toLowerCase() != 'every dave and bambi fantrack ever')
 									remove(countdownSet);
 								countdownSet.destroy();
 							}
 						});
-						if (SONG.song.toLowerCase() != 'strikeback')
+						if (SONG.song.toLowerCase() != 'strikeback' && SONG.song.toLowerCase() != 'every dave and bambi fantrack ever')
 							FlxG.sound.play(Paths.sound('intro1' + introSoundsSuffix), 0.6);
 					case 3:
 						countdownGo = new FlxSprite().loadGraphic(Paths.image(introAlts[2]));
@@ -2000,18 +2048,18 @@ class PlayState extends MusicBeatState
 
 						countdownGo.screenCenter();
 						countdownGo.antialiasing = antialias;
-						if (SONG.song.toLowerCase() != 'strikeback')
+						if (SONG.song.toLowerCase() != 'strikeback' && SONG.song.toLowerCase() != 'every dave and bambi fantrack ever')
 							insert(members.indexOf(notes), countdownGo);
 						FlxTween.tween(countdownGo, {/*y: countdownGo.y + 100,*/ alpha: 0}, Conductor.crochet / 1000, {
 							ease: FlxEase.cubeInOut,
 							onComplete: function(twn:FlxTween)
 							{
-								if (SONG.song.toLowerCase() != 'strikeback')
+								if (SONG.song.toLowerCase() != 'strikeback' && SONG.song.toLowerCase() != 'every dave and bambi fantrack ever')
 									remove(countdownGo);
 								countdownGo.destroy();
 							}
 						});
-						if (SONG.song.toLowerCase() != 'strikeback')
+						if (SONG.song.toLowerCase() != 'strikeback' && SONG.song.toLowerCase() != 'every dave and bambi fantrack ever')
 							FlxG.sound.play(Paths.sound('introGo' + introSoundsSuffix), 0.6);
 					case 4:
 				}
@@ -2148,6 +2196,14 @@ class PlayState extends MusicBeatState
 
 		camGame.alpha = 1;
 		camHUD.alpha = 1;
+		if (SONG.song.toLowerCase() == 'every dave and bambi fantrack ever')
+		{
+			camZooming = true;
+			cubestart = 500;
+			cubespeed = 450;
+			cubeinit = 1450;
+			cubeend = 12000;
+		}
 
 		previousFrameTime = FlxG.game.ticks;
 		lastReportedPlayheadPosition = 0;
@@ -2159,7 +2215,7 @@ class PlayState extends MusicBeatState
 		if (impact != null)
 			impact.stop();
 
-		if (SONG.song.toLowerCase() == 'strikeback')
+		if (SONG.song.toLowerCase() == 'strikeback' || SONG.song.toLowerCase() == 'every dave and bambi fantrack ever')
 			canPause = true;
 
 		if(startOnTime > 0)
@@ -2487,7 +2543,7 @@ class PlayState extends MusicBeatState
 			var targetAlpha:Float = 1;
 			if (player < 1)
 			{
-				if(!ClientPrefs.opponentStrums || SONG.song.toLowerCase() == 'strikeback') targetAlpha = 0;
+				if(!ClientPrefs.opponentStrums || ((SONG.song.toLowerCase() == 'strikeback') || SONG.song.toLowerCase() == 'every dave and bambi fantrack ever')) targetAlpha = 0;
 				else if(ClientPrefs.middleScroll) targetAlpha = 0.35;
 			}
 
@@ -2515,7 +2571,7 @@ class PlayState extends MusicBeatState
 			}
 			else
 			{
-				if(ClientPrefs.middleScroll || SONG.song.toLowerCase() != 'strikeback')
+				if(ClientPrefs.middleScroll || SONG.song.toLowerCase() != 'strikeback' && SONG.song.toLowerCase() != 'every dave and bambi fantrack ever')
 				{
 					babyArrow.x += 310;
 					if(i > 1) { //Up and Right
@@ -2808,7 +2864,7 @@ class PlayState extends MusicBeatState
 						heyTimer = 0;
 					}
 				}
-			case 'striker':
+			case 'striker' | 'bruhsoundeffect':
 				if (!startingSong && !infarm)
 				{
 					strikerbackground.x += backgroundspeed / FlxG.updateFramerate * 75 * 4 * 2 / 10; // Synchronized Value
@@ -2824,6 +2880,8 @@ class PlayState extends MusicBeatState
 					boyfriend.y = bambipos + (Math.sin(elapsedtime * 2) * 20);
 					trace(expungedpos + (Math.sin(elapsedtime) * 40));
 					trace(boyfriend.x);
+					trace(boyfriend.y);
+					bambicurrentposition.set(boyfriend.x, boyfriend.y);
 				}
 		}
 
@@ -3173,7 +3231,7 @@ class PlayState extends MusicBeatState
 		persistentUpdate = false;
 		paused = true;
 		cancelMusicFadeTween();
-		if (SONG.song.toLowerCase() == 'strikeback')
+		if (SONG.song.toLowerCase() == 'strikeback' || SONG.song.toLowerCase() == 'every dave and bambi fantrack ever')
 		{
 			screenshotCurrent();
 			FlxG.save.data.pressed7 = true;
@@ -3220,7 +3278,7 @@ class PlayState extends MusicBeatState
 				for (timer in modchartTimers) {
 					timer.active = true;
 				}
-				if (SONG.song.toLowerCase() == 'strikeback')
+				if (SONG.song.toLowerCase() == 'strikeback' || SONG.song.toLowerCase() == 'every dave and bambi fantrack ever')
 				{
 					retrying = true;
 					screenshotCurrent();
@@ -3684,7 +3742,7 @@ class PlayState extends MusicBeatState
 			camFollow.x += dad.cameraPosition[0] + opponentCameraOffset[0];
 			camFollow.y += dad.cameraPosition[1] + opponentCameraOffset[1];
 			tweenCamIn();
-			if (SONG.song.toLowerCase() == 'strikeback' && !isCameraOnForcedPos)
+			if (SONG.song.toLowerCase() == 'strikeback' && !isCameraOnForcedPos || SONG.song.toLowerCase() == 'every dave and bambi fantrack ever')
 				defaultCamZoom = 0.8;
 			//	defaultCamZoom = 0.1;
 		}
@@ -3703,7 +3761,7 @@ class PlayState extends MusicBeatState
 					}
 				});
 			}
-			if (SONG.player1 == 'bambi' && SONG.song.toLowerCase() == 'strikeback' && !isCameraOnForcedPos)
+			if (SONG.player1 == 'bambi' && SONG.song.toLowerCase() == 'strikeback' && !isCameraOnForcedPos || SONG.song.toLowerCase() == 'every dave and bambi fantrack ever')
 			//	defaultCamZoom = 0.1; // 1.4
 				defaultCamZoom = 1.4; // 1.4
 		}
@@ -3770,6 +3828,11 @@ class PlayState extends MusicBeatState
 				FlxG.switchState(new Ending("Best"));
 			else
 				FlxG.switchState(new Ending("Good"));
+		}
+		if (SONG.song.toLowerCase() == 'every dave and bambi fantrack ever')
+		{
+			screenshotCurrent();
+			FlxG.switchState(new Laughing());
 		}
 		timeBarBG.visible = false;
 		timeBar.visible = false;
@@ -4018,10 +4081,12 @@ class PlayState extends MusicBeatState
 		}
 
 		rating.loadGraphic(Paths.image(pixelShitPart1 + daRating.image + pixelShitPart2));
-		rating.cameras = [camHUD];
-		rating.screenCenter();
-		rating.x = coolText.x - 40;
-		rating.y -= 60;
+	//	rating.cameras = [camHUD];
+	//	rating.screenCenter();
+	//	rating.x = coolText.x - 40;
+	//	rating.y -= 60;
+		rating.x = bambicurrentposition.x + 300;
+		rating.y = bambicurrentposition.y + 70;
 		rating.acceleration.y = 550 * playbackRate * playbackRate;
 		rating.velocity.y -= FlxG.random.int(140, 175) * playbackRate;
 		rating.velocity.x -= FlxG.random.int(0, 10) * playbackRate;
@@ -4036,6 +4101,8 @@ class PlayState extends MusicBeatState
 		comboSpr.acceleration.y = FlxG.random.int(200, 300) * playbackRate * playbackRate;
 		comboSpr.velocity.y -= FlxG.random.int(140, 160) * playbackRate;
 		comboSpr.visible = (!ClientPrefs.hideHud && showCombo);
+		if (SONG.song.toLowerCase() == 'strikeback' || SONG.song.toLowerCase() == 'every dave and bambi fansong ever')
+			comboSpr.alpha = 0;
 		comboSpr.x += ClientPrefs.comboOffset[0];
 		comboSpr.y -= ClientPrefs.comboOffset[1];
 		comboSpr.y += 60;
@@ -4051,7 +4118,10 @@ class PlayState extends MusicBeatState
 
 		if (!PlayState.isPixelStage)
 		{
-			rating.setGraphicSize(Std.int(rating.width * 0.7));
+			if (SONG.song.toLowerCase() == 'strikeback' || SONG.song.toLowerCase() == 'every dave and bambi fansong ever')
+				rating.setGraphicSize(Std.int(rating.width * 0.4));
+			else
+				rating.setGraphicSize(Std.int(rating.width * 0.7));
 			rating.antialiasing = ClientPrefs.globalAntialiasing;
 			comboSpr.setGraphicSize(Std.int(comboSpr.width * 0.7));
 			comboSpr.antialiasing = ClientPrefs.globalAntialiasing;
@@ -4096,10 +4166,10 @@ class PlayState extends MusicBeatState
 		for (i in seperatedScore)
 		{
 			var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'num' + Std.int(i) + pixelShitPart2));
-			numScore.cameras = [camHUD];
-			numScore.screenCenter();
-			numScore.x = coolText.x + (43 * daLoop) - 90;
-			numScore.y += 80;
+		//	numScore.cameras = [camHUD];
+		//	numScore.screenCenter();
+			numScore.x = bambicurrentposition.x - 70 + coolText.x + (SONG.song.toLowerCase() == 'strikeback' ? 43 / 2 * daLoop : 43 * daLoop) - 90;
+			numScore.y = bambicurrentposition.y + 140;
 
 			numScore.x += ClientPrefs.comboOffset[2];
 			numScore.y -= ClientPrefs.comboOffset[3];
@@ -4110,7 +4180,10 @@ class PlayState extends MusicBeatState
 			if (!PlayState.isPixelStage)
 			{
 				numScore.antialiasing = ClientPrefs.globalAntialiasing;
-				numScore.setGraphicSize(Std.int(numScore.width * 0.5));
+				if (SONG.song.toLowerCase() == 'strikeback' || SONG.song.toLowerCase() == 'every dave and bambi fansong ever')
+					numScore.setGraphicSize(Std.int(numScore.width * 0.25));
+				else
+					numScore.setGraphicSize(Std.int(numScore.width * 0.5));
 			}
 			else
 			{
@@ -4460,6 +4533,11 @@ class PlayState extends MusicBeatState
 	{
 		if (Paths.formatToSongPath(SONG.song) != 'tutorial')
 			camZooming = true;
+
+		if (SONG.song.toLowerCase() == 'every dave and bambi fantrack ever')
+		{
+			strikerbackground.x -= 5;
+		}
 
 		if(note.noteType == 'Hey!' && dad.animOffsets.exists('hey')) {
 			dad.playAnim('hey', true);
@@ -4925,7 +5003,7 @@ class PlayState extends MusicBeatState
 		}
 		if (curBeat % boyfriend.danceEveryNumBeats == 0 && boyfriend.animation.curAnim != null && !boyfriend.animation.curAnim.name.startsWith('sing') && !boyfriend.stunned)
 		{
-			if (SONG.song.toLowerCase() == 'strikeback' && curBeat >= 581)
+			if (SONG.song.toLowerCase() == 'strikeback' && curBeat >= 581 || SONG.song.toLowerCase() == 'every dave and bambi fantrack ever' && curBeat >= 387)
 				boyfriend.playAnim('corn');
 			else
 				boyfriend.dance();
@@ -4993,6 +5071,31 @@ class PlayState extends MusicBeatState
 
 		setOnLuas('curBeat', curBeat); //DAWGG?????
 		callOnLuas('onBeatHit', []);
+		if (SONG.song.toLowerCase() == 'every dave and bambi fantrack ever' && curBeat == 384)
+		{
+			isCameraOnForcedPos = true;
+			infarm = true;
+			boyfriend.setGraphicSize(Std.int(boyfriend.width * 2));
+			boyfriend.x = 1670;
+			boyfriend.y = 550;
+			cameraSpeed = 250;
+			defaultCamZoom = 0.7;
+			camZoomingDecay = 500;
+			camFollow.set(800, 490);
+			if (!ClientPrefs.downScroll)
+			{
+				FlxTween.tween(timeTxt, {y: timeTxt.y - 80}, 0.5, {ease:FlxEase.quintOut});
+				FlxTween.tween(timeBarBG, {y: timeBarBG.y - 80}, 0.5, {ease:FlxEase.quintOut});
+				FlxTween.tween(timeBar, {y: timeBar.y - 80}, 0.5, {ease:FlxEase.quintOut});
+			}
+			else
+			{
+				FlxTween.tween(timeTxt, {y: timeTxt.y + 80}, 0.5, {ease:FlxEase.quintOut});
+				FlxTween.tween(timeBarBG, {y: timeBarBG.y + 80}, 0.5, {ease:FlxEase.quintOut});
+				FlxTween.tween(timeBar, {y: timeBar.y + 80}, 0.5, {ease:FlxEase.quintOut});
+			}
+			FlxTween.tween(boyfriend, {x: 740}, 0.75, {ease:FlxEase.quintOut});
+		}
 		if (SONG.song.toLowerCase() == 'strikeback')
 		{
 			switch (curBeat)
